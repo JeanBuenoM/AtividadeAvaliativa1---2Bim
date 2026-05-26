@@ -3,7 +3,6 @@
 
 #define NAO_CALCULADO (-1LL)   /* sentinela: posicao ainda nao visitada */
 
-/* ---------- versao não otimizada para comparação ---------- */
 long long fib_naive(int n, long long *calls)
 {
     (*calls)++;
@@ -11,27 +10,16 @@ long long fib_naive(int n, long long *calls)
     return fib_naive(n - 1, calls) + fib_naive(n - 2, calls);
 }
 
-/* ---------- versao memoizada ---------------------------------------- */
-
-/*
- * fib_memo: calcula fib(n) usando o vetor cache[] alocado dinamicamente.
- * - Se cache[n] ja foi preenchido, retorna imediatamente (sem nova chamada
- *   recursiva), evitando o retrabalho da versao ingenua.
- * - Caso contrario, resolve recursivamente e armazena o resultado.
- */
 long long fib_memo(int n, long long *cache, long long *calls)
 {
     (*calls)++;
 
-    /* --- Caso base --- */
     if (n <= 1)
         return n;
 
-    /* --- Verificacao do cache: subproblema ja resolvido? --- */
     if (cache[n] != NAO_CALCULADO)
-        return cache[n];            /* retorna resultado armazenado        */
+        return cache[n];
 
-    /* --- Reducao do problema (e armazenamento do resultado) --- */
     cache[n] = fib_memo(n - 1, cache, calls)
              + fib_memo(n - 2, cache, calls);
 
@@ -48,35 +36,28 @@ int main(void)
         return 1;
     }
 
-    /* ----- versao nao otimizada ----- */
     long long calls_naive = 0;
     long long res_naive = 0;
 
-    /* Para n grande a versao nao otimizada seria impraticavel; limitamos a demo */
     if (n <= 45) {
         res_naive = fib_naive(n, &calls_naive);
     } else {
         printf("\n[Aviso] n > 45: versão não otimizada omitida.\n");
-        calls_naive = -1;   /* indica que nao foi executada */
+        calls_naive = -1; 
     }
 
-    /* ----- versao memoizada ----- */
-
-    /* Aloca dinamicamente vetor de cache de tamanho (n+1) */
     long long *cache = (long long *) malloc((n + 1) * sizeof(long long));
     if (cache == NULL) {
         printf("Erro: falha na alocacao de memoria.\n");
         return 1;
     }
 
-    /* Inicializa todas as posicoes com o sentinela NAO_CALCULADO */
     for (int i = 0; i <= n; i++)
         cache[i] = NAO_CALCULADO;
 
     long long calls_memo = 0;
     long long res_memo = fib_memo(n, cache, &calls_memo);
 
-    /* ----- exibicao dos resultados ----- */
     printf("\nFibonacci(%d) = %lld\n", n, res_memo);
 
     printf("\n--- Comparativo de chamadas recursivas ---\n");
@@ -92,6 +73,6 @@ int main(void)
         printf("\n  Redução de chamadas: %.1fx menos com memorização.\n",
                (double) calls_naive / calls_memo);
 
-    free(cache);   /* libera memoria alocada dinamicamente */
+    free(cache);
     return 0;
 }
