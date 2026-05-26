@@ -1,16 +1,12 @@
 #include <stdio.h>
 
-/* Calcula fib(n) de forma recursiva e incrementa o contador de chamadas.
- * O ponteiro 'calls' e passado para evitar variaveis globais. */
 long long fibonacci(int n, long long *calls)
 {
-    (*calls)++;                        /* conta esta chamada*/
+    (*calls)++;
 
-    /* --- Caso base --- */
     if (n <= 1)
         return n;
-
-    /* --- Reducao do problema --- */
+    
     return fibonacci(n - 1, calls) + fibonacci(n - 2, calls);
 }
 
